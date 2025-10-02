@@ -65,8 +65,21 @@ class ApiHandler {
         },
         body: json.encode(user),
       );
+
+      if (response.statusCode < 200 || response.statusCode > 299) {
+        throw "Update failed: ${response.statusCode} - ${response.statusMessage}";
+      }
     } catch (e) {
-      print('Caiu no catch: ${e}');
+      String msg = "$e";
+      print(msg);
+      Fluttertoast.showToast(
+          msg: msg,
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.grey[700],
+          textColor: Colors.white,
+          fontSize: 16.0);
     }
 
     return response;
@@ -84,8 +97,21 @@ class ApiHandler {
         },
         body: json.encode(user),
       );
+
+      if (response.statusCode < 200 || response.statusCode > 299) {
+        throw "Create failed: ${response.statusCode} - ${response.statusMessage}";
+      }
     } catch (e) {
-      print('Caiu no catch: ${e}');
+      String msg = "$e";
+      print(msg);
+      Fluttertoast.showToast(
+          msg: msg,
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.grey[700],
+          textColor: Colors.white,
+          fontSize: 16.0);
     }
 
     return response;
@@ -102,10 +128,61 @@ class ApiHandler {
           'Content-type': 'application/json; charset=UTF-8'
         },
       );
+
+      if (response.statusCode < 200 || response.statusCode > 299) {
+        throw "Delete failed: ${response.statusCode} - ${response.statusMessage}";
+      }
     } catch (e) {
-      print('Caiu no catch: ${e}');
+      String msg = "$e";
+      print(msg);
+      Fluttertoast.showToast(
+          msg: msg,
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.grey[700],
+          textColor: Colors.white,
+          fontSize: 16.0);
     }
 
     return response;
+  }
+
+  Future<User> getUserById(String id) async {
+    User? user;
+
+    final uri = Uri.parse("$baseUri/$id");
+
+    try {
+      final response = await http.get(
+        uri,
+        headers: <String, String>{
+          'Content-type': 'application/json; charset=UTF-8'
+        },
+      );
+
+      print(response.body);
+
+      if (response.statusCode >= 200 && response.statusCode <= 299) {
+        final Map<String, dynamic> jsonData = json.decode(response.body);
+        user = User.fromJson(jsonData);
+      } else {
+        throw "Search by Id failed: ${response.statusCode} - ${response.statusMessage}";
+      }
+    } catch (e) {
+      String msg = "$e";
+      print(msg);
+      Fluttertoast.showToast(
+          msg: msg,
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.grey[700],
+          textColor: Colors.white,
+          fontSize: 16.0);
+      return user!;
+    }
+
+    return user!;
   }
 }

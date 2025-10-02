@@ -3,6 +3,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:user_registration/api_handler.dart';
 import 'package:user_registration/edit_page.dart';
+import 'package:user_registration/find_user.dart';
 import 'package:user_registration/http/http_extensions.dart';
 import 'package:user_registration/user.dart';
 
@@ -18,37 +19,29 @@ class _MainPageState extends State<MainPage> {
   late List<User> data = [];
 
   void getData() async {
-    try {
-      data = await apiHandler.getUserData();
-      setState(() {});
-    } catch (e) {
-      print('Error when refreshing page: $e');
-    }
+    data = await apiHandler.getUserData();
+    setState(() {});
   }
 
   void deleteUser(String userId) async {
-    try {
-      final msg;
-      final response = await apiHandler.deleteUser(userId: userId);
-      print("Response: ${response.statusCode}");
+    final msg;
+    final response = await apiHandler.deleteUser(userId: userId);
+    print("Response: ${response.statusCode}");
 
-      if (response.statusCode >= 200 && response.statusCode < 300) {
-        msg = "User deleted successfuly!";
-        getData();
-      } else {
-        msg = "An error occured at delete: ${response.statusMessage}";
-      }
-      Fluttertoast.showToast(
-          msg: msg,
-          toastLength: Toast.LENGTH_LONG,
-          gravity: ToastGravity.BOTTOM,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.grey[700],
-          textColor: Colors.white,
-          fontSize: 16.0);
-    } catch (e) {
-      print('Error when deleting user: $e');
+    if (response.statusCode >= 200 && response.statusCode <= 299) {
+      msg = "User deleted successfuly!";
+      getData();
+    } else {
+      msg = "An error occured at delete: ${response.statusMessage}";
     }
+    Fluttertoast.showToast(
+        msg: msg,
+        toastLength: Toast.LENGTH_LONG,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.grey[700],
+        textColor: Colors.white,
+        fontSize: 16.0);
   }
 
   @override
@@ -73,22 +66,43 @@ class _MainPageState extends State<MainPage> {
         padding: EdgeInsets.all(20),
         child: const Text('Refresh'),
       ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.teal,
-        foregroundColor: Colors.white,
-        onPressed: () => Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => EditPage(
-              user: const User(
-                userId: '',
-                name: '',
-                address: '',
+      floatingActionButton: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          FloatingActionButton(
+            heroTag: 1,
+            backgroundColor: Colors.teal,
+            foregroundColor: Colors.white,
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const FindUser(),
               ),
             ),
+            child: const Icon(Icons.search),
           ),
-        ),
-        child: const Icon(Icons.add),
+          const SizedBox(
+            height: 10,
+          ),
+          FloatingActionButton(
+            heroTag: 2,
+            backgroundColor: Colors.teal,
+            foregroundColor: Colors.white,
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => EditPage(
+                  user: const User(
+                    userId: '',
+                    name: '',
+                    address: '',
+                  ),
+                ),
+              ),
+            ),
+            child: const Icon(Icons.add),
+          ),
+        ],
       ),
       body: Column(
         children: [
