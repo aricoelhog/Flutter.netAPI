@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:http/http.dart' as http;
 import 'package:user_registration/api_handler.dart';
 import 'package:user_registration/edit_page.dart';
-import 'package:user_registration/find_user.dart';
 import 'package:user_registration/http/http_extensions.dart';
 import 'package:user_registration/user.dart';
 
@@ -17,16 +15,21 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> {
   ApiHandler apiHandler = ApiHandler();
   late List<User> data = [];
+  TextEditingController textEditingController = TextEditingController();
 
   void getData() async {
     data = await apiHandler.getUserData();
     setState(() {});
   }
 
+  void filter(String text) async {
+    data = await apiHandler.getUserData(filter: text);
+    setState(() {});
+  }
+
   void deleteUser(String userId) async {
     final msg;
     final response = await apiHandler.deleteUser(userId: userId);
-    print("Response: ${response.statusCode}");
 
     if (response.statusCode >= 200 && response.statusCode <= 299) {
       msg = "User deleted successfuly!";
@@ -70,49 +73,50 @@ class _MainPageState extends State<MainPage> {
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           FloatingActionButton(
-            heroTag: 1,
-            backgroundColor: Colors.teal,
-            foregroundColor: Colors.white,
-            onPressed: () => Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const FindUser(),
-              ),
-            ),
-            child: const Icon(Icons.search),
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-          FloatingActionButton(
             heroTag: 2,
             backgroundColor: Colors.teal,
             foregroundColor: Colors.white,
-            onPressed: () => Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => EditPage(
-                  user: const User(
-                    userId: '',
-                    name: '',
-                    address: '',
+            onPressed: () async {
+              await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => EditPage(
+                    user: const User(
+                      userId: '',
+                      name: '',
+                      address: '',
+                    ),
                   ),
                 ),
-              ),
-            ),
+              );
+              textEditingController.clear();
+              getData();
+            },
             child: const Icon(Icons.add),
           ),
         ],
       ),
       body: Column(
         children: [
+          TextField(
+            decoration: InputDecoration(
+              prefixIcon: Icon(Icons.search), // Ícone no início
+              hintText: 'Tap the user name',
+              border: OutlineInputBorder(),
+            ),
+            controller: textEditingController,
+            onChanged: (text) => filter(text),
+          ),
+          SizedBox(
+            height: 10,
+          ),
           Expanded(
             child: ListView.builder(
               itemCount: data.length,
               itemBuilder: (BuildContext context, int index) {
                 return ListTile(
-                  onTap: () {
-                    Navigator.push(
+                  onTap: () async {
+                    await Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (context) => EditPage(
@@ -121,6 +125,8 @@ class _MainPageState extends State<MainPage> {
                         ),
                       ),
                     );
+                    textEditingController.clear();
+                    getData();
                   },
                   //leading: Text("${data[index].userId}"),
                   title: Text(data[index].name),

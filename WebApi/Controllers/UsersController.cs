@@ -22,9 +22,17 @@ namespace WebApi.Controllers
 
         // GET: api/Users
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Users>>> Getusers()
+        public async Task<ActionResult<IEnumerable<Users>>> Getusers([FromQuery] string? filter = null)
         {
-            return await _context.users.ToListAsync();
+            var query = _context.users.AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(filter))
+            {
+                Console.WriteLine($"Filtro: {filter}");
+                query = query.Where(u => EF.Functions.ILike(u.name, $"%{filter}%"));
+            }
+
+            return await query.ToListAsync();
         }
 
         // GET: api/Users/5

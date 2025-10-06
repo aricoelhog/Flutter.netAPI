@@ -10,18 +10,19 @@ import 'package:uuid/uuid.dart';
 class ApiHandler {
   final String baseUri = "http://192.168.3.9:7018/api/users";
 
-  Future<List<User>> getUserData() async {
+  Future<List<User>> getUserData({String? filter}) async {
     List<User> data = [];
 
-    final uri = Uri.parse(baseUri);
+    Uri uri = Uri.parse(baseUri);
+
+    if (filter != '' && filter != null) {
+      uri = uri.replace(queryParameters: {'filter': filter});
+    }
 
     try {
-      final response = await http.get(
-        uri,
-        headers: <String, String>{
-          'Content-type': 'application/json; charset=UTF-8'
-        },
-      );
+      final response = await http.get(uri, headers: <String, String>{
+        'Content-type': 'application/json; charset=UTF-8'
+      });
 
       print(response.body);
 
@@ -37,7 +38,6 @@ class ApiHandler {
       }
     } catch (e) {
       String msg = "$e";
-      print(msg);
       Fluttertoast.showToast(
           msg: msg,
           toastLength: Toast.LENGTH_LONG,
@@ -71,7 +71,6 @@ class ApiHandler {
       }
     } catch (e) {
       String msg = "$e";
-      print(msg);
       Fluttertoast.showToast(
           msg: msg,
           toastLength: Toast.LENGTH_LONG,
@@ -103,7 +102,6 @@ class ApiHandler {
       }
     } catch (e) {
       String msg = "$e";
-      print(msg);
       Fluttertoast.showToast(
           msg: msg,
           toastLength: Toast.LENGTH_LONG,
@@ -134,7 +132,6 @@ class ApiHandler {
       }
     } catch (e) {
       String msg = "$e";
-      print(msg);
       Fluttertoast.showToast(
           msg: msg,
           toastLength: Toast.LENGTH_LONG,
@@ -171,7 +168,6 @@ class ApiHandler {
       }
     } catch (e) {
       String msg = "$e";
-      print(msg);
       Fluttertoast.showToast(
           msg: msg,
           toastLength: Toast.LENGTH_LONG,
