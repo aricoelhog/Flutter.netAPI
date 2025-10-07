@@ -42,7 +42,7 @@ class _MainPageState extends State<MainPage> {
         toastLength: Toast.LENGTH_LONG,
         gravity: ToastGravity.BOTTOM,
         timeInSecForIosWeb: 1,
-        backgroundColor: Colors.grey[700],
+        backgroundColor: Colors.blueGrey,
         textColor: Colors.white,
         fontSize: 16.0);
   }
@@ -59,11 +59,11 @@ class _MainPageState extends State<MainPage> {
       appBar: AppBar(
         title: const Text('User Registration'),
         centerTitle: true,
-        backgroundColor: Colors.teal,
+        backgroundColor: Colors.blueGrey,
         foregroundColor: Colors.white,
       ),
       bottomNavigationBar: MaterialButton(
-        color: Colors.teal,
+        color: Colors.blueGrey,
         textColor: Colors.white,
         onPressed: getData,
         padding: EdgeInsets.all(20),
@@ -74,7 +74,7 @@ class _MainPageState extends State<MainPage> {
         children: [
           FloatingActionButton(
             heroTag: 2,
-            backgroundColor: Colors.teal,
+            backgroundColor: Colors.blueGrey,
             foregroundColor: Colors.white,
             onPressed: () async {
               await Navigator.push(

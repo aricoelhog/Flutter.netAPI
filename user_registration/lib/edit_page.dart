@@ -64,11 +64,11 @@ class _EditPageState extends State<EditPage> {
       appBar: AppBar(
         title: Text("${widget.isEdition ? 'Edit' : 'Add'} Page"),
         centerTitle: true,
-        backgroundColor: Colors.teal,
+        backgroundColor: Colors.blueGrey,
         foregroundColor: Colors.white,
       ),
       bottomNavigationBar: MaterialButton(
-        color: Colors.teal,
+        color: Colors.blueGrey,
         textColor: Colors.white,
         onPressed: widget.isEdition ? updateData : insertData,
         padding: EdgeInsets.all(20),
