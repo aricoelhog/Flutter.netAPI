@@ -16,18 +16,37 @@ class _MainPageState extends State<MainPage> {
   ApiHandler apiHandler = ApiHandler();
   late List<User> data = [];
   TextEditingController textEditingController = TextEditingController();
+  bool isLoading = false;
 
   void getData() async {
+    setState(() {
+      isLoading = true;
+    });
+
     data = await apiHandler.getUserData();
-    setState(() {});
+
+    setState(() {
+      isLoading = false;
+    });
   }
 
   void filter(String text) async {
+    setState(() {
+      isLoading = true;
+    });
+
     data = await apiHandler.getUserData(filter: text);
-    setState(() {});
+
+    setState(() {
+      isLoading = false;
+    });
   }
 
   void deleteUser(String userId) async {
+    setState(() {
+      isLoading = true;
+    });
+
     final msg;
     final response = await apiHandler.deleteUser(userId: userId);
 
@@ -36,7 +55,11 @@ class _MainPageState extends State<MainPage> {
       getData();
     } else {
       msg = "An error occured at delete: ${response.statusMessage}";
+      setState(() {
+        isLoading = false;
+      });
     }
+
     Fluttertoast.showToast(
         msg: msg,
         toastLength: Toast.LENGTH_LONG,
@@ -65,7 +88,7 @@ class _MainPageState extends State<MainPage> {
       bottomNavigationBar: MaterialButton(
         color: Colors.blueGrey,
         textColor: Colors.white,
-        onPressed: getData,
+        onPressed: isLoading ? null : getData,
         padding: EdgeInsets.all(20),
         child: const Text('Refresh'),
       ),
@@ -76,22 +99,24 @@ class _MainPageState extends State<MainPage> {
             heroTag: 2,
             backgroundColor: Colors.blueGrey,
             foregroundColor: Colors.white,
-            onPressed: () async {
-              await Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => EditPage(
-                    user: const User(
-                      userId: '',
-                      name: '',
-                      address: '',
-                    ),
-                  ),
-                ),
-              );
-              textEditingController.clear();
-              getData();
-            },
+            onPressed: isLoading
+                ? null
+                : () async {
+                    await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => EditPage(
+                          user: const User(
+                            userId: '',
+                            name: '',
+                            address: '',
+                          ),
+                        ),
+                      ),
+                    );
+                    textEditingController.clear();
+                    getData();
+                  },
             child: const Icon(Icons.add),
           ),
         ],
@@ -100,46 +125,53 @@ class _MainPageState extends State<MainPage> {
         children: [
           TextField(
             decoration: InputDecoration(
-              prefixIcon: Icon(Icons.search), // Ícone no início
+              prefixIcon: Icon(Icons.search),
               hintText: 'Tap the user name',
               border: OutlineInputBorder(),
             ),
             controller: textEditingController,
             onChanged: (text) => filter(text),
+            enabled: !isLoading,
           ),
-          SizedBox(
+          const SizedBox(
             height: 10,
           ),
           Expanded(
-            child: ListView.builder(
-              itemCount: data.length,
-              itemBuilder: (BuildContext context, int index) {
-                return ListTile(
-                  onTap: () async {
-                    await Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => EditPage(
-                          user: data[index],
-                          isEdition: true,
+            child: isLoading
+                ? const Center(
+                    child: CircularProgressIndicator(
+                      color: Colors.blueGrey,
+                    ),
+                  )
+                : ListView.builder(
+                    itemCount: data.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return ListTile(
+                        onTap: () async {
+                          await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => EditPage(
+                                user: data[index],
+                                isEdition: true,
+                              ),
+                            ),
+                          );
+                          textEditingController.clear();
+                          getData();
+                        },
+                        //leading: Text("${data[index].userId}"),
+                        title: Text(data[index].name),
+                        subtitle: Text(data[index].address),
+                        trailing: IconButton(
+                          onPressed: () {
+                            deleteUser(data[index].userId);
+                          },
+                          icon: const Icon(Icons.delete_outline),
                         ),
-                      ),
-                    );
-                    textEditingController.clear();
-                    getData();
-                  },
-                  //leading: Text("${data[index].userId}"),
-                  title: Text(data[index].name),
-                  subtitle: Text(data[index].address),
-                  trailing: IconButton(
-                    onPressed: () {
-                      deleteUser(data[index].userId);
+                      );
                     },
-                    icon: const Icon(Icons.delete_outline),
                   ),
-                );
-              },
-            ),
           )
         ],
       ),
