@@ -31,15 +31,8 @@ class _MainPageState extends State<MainPage> {
   }
 
   void filter(String text) async {
-    setState(() {
-      isLoading = true;
-    });
-
     data = await apiHandler.getUserData(filter: text);
-
-    setState(() {
-      isLoading = false;
-    });
+    setState(() {});
   }
 
   void deleteUser(String userId) async {
