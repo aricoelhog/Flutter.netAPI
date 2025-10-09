@@ -2,6 +2,8 @@
 
 Integração entre um app Flutter e uma API .NET 8, com comunicação via REST, usando PostgreSQL como banco de dados.
 
+![Demonstração da Calculadora](assets/flutter_netapi.gif)
+
 ---
 
 ## Tabela de Conteúdos
