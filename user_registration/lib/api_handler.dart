@@ -97,6 +97,7 @@ class ApiHandler {
   Future<http.Response> addUser({required User user}) async {
     final uri = Uri.parse(baseUri);
     late http.Response response;
+    String msg = "User created successfuly!";
 
     try {
       if (!await InternetChecker.hasConnection()) {
@@ -115,16 +116,16 @@ class ApiHandler {
         throw "Create failed: ${response.statusCode} - ${response.statusMessage}";
       }
     } catch (e) {
-      String msg = "$e";
-      Fluttertoast.showToast(
-          msg: msg,
-          toastLength: Toast.LENGTH_LONG,
-          gravity: ToastGravity.BOTTOM,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.grey[700],
-          textColor: Colors.white,
-          fontSize: 16.0);
+      msg = "$e";
     }
+    Fluttertoast.showToast(
+        msg: msg,
+        toastLength: Toast.LENGTH_LONG,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.grey[700],
+        textColor: Colors.white,
+        fontSize: 16.0);
 
     return response;
   }
