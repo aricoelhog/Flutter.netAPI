@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:user_registration/http/http_extensions.dart';
+import 'package:user_registration/internet_checker.dart';
 import 'package:user_registration/user.dart';
 import 'package:http/http.dart' as http;
 import 'package:uuid/uuid.dart';
@@ -20,6 +21,10 @@ class ApiHandler {
     }
 
     try {
+      if (!await InternetChecker.hasConnection()) {
+        throw Exception('Check your internet connection!');
+      }
+
       final response = await http.get(uri, headers: <String, String>{
         'Content-type': 'application/json; charset=UTF-8'
       });
@@ -58,6 +63,10 @@ class ApiHandler {
     late http.Response response;
 
     try {
+      if (!await InternetChecker.hasConnection()) {
+        throw Exception('Check your internet connection!');
+      }
+
       response = await http.put(
         uri,
         headers: <String, String>{
@@ -89,6 +98,10 @@ class ApiHandler {
     late http.Response response;
 
     try {
+      if (!await InternetChecker.hasConnection()) {
+        throw Exception('Check your internet connection!');
+      }
+
       response = await http.post(
         uri,
         headers: <String, String>{
@@ -120,6 +133,10 @@ class ApiHandler {
     late http.Response response;
 
     try {
+      if (!await InternetChecker.hasConnection()) {
+        throw Exception('Check your internet connection!');
+      }
+
       response = await http.delete(
         uri,
         headers: <String, String>{
@@ -151,6 +168,10 @@ class ApiHandler {
     final uri = Uri.parse("$baseUri/$id");
 
     try {
+      if (!await InternetChecker.hasConnection()) {
+        throw Exception('Check your internet connection!');
+      }
+
       final response = await http.get(
         uri,
         headers: <String, String>{

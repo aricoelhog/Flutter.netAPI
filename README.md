@@ -146,6 +146,7 @@ Isso aplicará as migrações criadas anteriormente e criará as tabelas corresp
         │   ├── user.dart            # Model
         │   ├── api_handler.dart     # Requisições http
         │   ├── edit_page.dart       # Tela de edição
+        |   ├── internet_checker.dart       # Verifica conexão com internet
         │   └── http/
         │       └── http_extensions.dart # Mensagens do status
         └── pubspec.yaml
